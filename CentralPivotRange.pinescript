@@ -1,0 +1,97 @@
+//@version=3
+//
+// Central Pivot Range (CPR) Indicator for TradingView
+// This script is an implementation of Central Pivot Range described at http://pivotboss.com/2010/05/31/a-quick-guide-to-the-pivot-range
+// by Sherwin Daganato, 20171112
+// https://github.com/sherwind/pinescript-cpr
+//
+// Inputs:
+//
+// Number of Daily CPR Back - Set the number of calendar days back to plot historical daily CPR. The default value is 7.
+//                            Non-trading days are not taken into account.
+//                            A value of 7, for example, would display only 5 ADR for a 24x5 market.
+// Number of Weekly CPR Back - Set the number of calendar weeks back to plot historical weekly CPR. The default value is 0.
+// Number of Monthly CPR Back - Set the number of calendar months back to plot historical monthly CPR. The default value is 0.
+// Number of Yearly CPR Back - Set the number of calendar years back to plot historical yearly CPR. The default value is 0.
+//
+study(title="SD - Central Pivot Range - Daily Weekly Monthly Yearly", shorttitle="[SD]CPR", overlay=true)
+
+daily_cpr = input(title="Number of Daily CPR Back", type=integer, defval=7, minval=0)
+weekly_cpr = input(title="Number of Weekly CPR Back", type=integer, defval=0, minval=0)
+monthly_cpr = input(title="Number of Monthly CPR Back", type=integer, defval=0, minval=0)
+yearly_cpr = input(title="Number of Yearly CPR Back", type=integer, defval=0, minval=0)
+
+
+new_bar(res) => change(time(res)) != 0
+new_period(condition, src) =>
+    result = 0.0
+    result := condition ? src : result[1]
+    result
+
+pivot = (high + low + close) / 3.0
+bc = (high + low) / 2.0
+tc = (pivot - bc) + pivot
+
+
+//Daily Central Pivot Range
+dpp = security(tickerid, 'D', pivot[1], lookahead=barmerge.lookahead_on)
+dbc = security(tickerid, 'D', bc[1], lookahead=barmerge.lookahead_on)
+dtc = security(tickerid, 'D', tc[1], lookahead=barmerge.lookahead_on)
+
+one_day = 1000 * 60 * 60 * 24
+new_day = daily_cpr > 0 and timenow - time < one_day * daily_cpr and new_bar("D")
+dpp_ = new_period(new_day, dpp)
+dtc_ = new_period(new_day, dtc)
+dbc_ = new_period(new_day, dbc)
+
+plot(isintraday ? dpp_ : na, title="Daily PP", style=circles, color=#238859, linewidth=2)
+plot(isintraday ? dtc_ : na, title="Daily TC", style=circles, color=#238859, linewidth=2) 
+plot(isintraday ? dbc_ : na, title="Daily BC", style=circles, color=#238859, linewidth=2)
+
+
+//Weekly Central Pivot Range
+wpp = security(tickerid, 'W', pivot[1], lookahead=barmerge.lookahead_on)
+wbc = security(tickerid, 'W', bc[1], lookahead=barmerge.lookahead_on)
+wtc = security(tickerid, 'W', tc[1], lookahead=barmerge.lookahead_on)
+
+one_week = one_day * 7
+new_week = weekly_cpr > 0 and timenow - time < one_week * weekly_cpr and new_bar("W")
+wpp_ = new_period(new_week, wpp)
+wtc_ = new_period(new_week, wtc)
+wbc_ = new_period(new_week, wbc)
+
+plot(isintraday or isdaily ? wpp_ : na, title="Weekly PP", style=circles, color=#5b85bf, linewidth=2)
+plot(isintraday or isdaily ? wtc_ : na, title="Weekly TC", style=circles, color=#5b85bf, linewidth=2) 
+plot(isintraday or isdaily ? wbc_ : na, title="Weekly BC", style=circles, color=#5b85bf, linewidth=2) 
+
+
+//Monthly Central Pivot Range
+mpp = security(tickerid, 'M', pivot[1], lookahead=barmerge.lookahead_on)
+mbc = security(tickerid, 'M', bc[1], lookahead=barmerge.lookahead_on)
+mtc = security(tickerid, 'M', tc[1], lookahead=barmerge.lookahead_on)
+
+one_month = one_day * 30
+new_month = monthly_cpr > 0 and timenow - time < one_month * monthly_cpr and new_bar("M")
+mpp_ = new_period(new_month, mpp)
+mtc_ = new_period(new_month, mtc)
+mbc_ = new_period(new_month, mbc)
+
+plot(isintraday or isdaily or isweekly ? mpp_ : na, title="Monthly PP", style=circles, color=#b35b46, linewidth=2)
+plot(isintraday or isdaily or isweekly ? mtc_ : na, title="Monthly TC", style=circles, color=#b35b46, linewidth=2)
+plot(isintraday or isdaily or isweekly ? mbc_ : na, title="Monthly BC", style=circles, color=#b35b46, linewidth=2)
+
+
+//Yearly Central Pivot Range
+ypp = security(tickerid, '12M', pivot[1], lookahead=barmerge.lookahead_on)
+ybc = security(tickerid, '12M', bc[1], lookahead=barmerge.lookahead_on)
+ytc = security(tickerid, '12M', tc[1], lookahead=barmerge.lookahead_on)
+
+one_year = one_day * 365
+new_year = yearly_cpr > 0 and timenow - time < one_year * yearly_cpr and new_bar("12M")
+ypp_ = new_period(new_year, ypp)
+ytc_ = new_period(new_year, ytc)
+ybc_ = new_period(new_year, ybc)
+
+plot(isintraday or isdaily or isweekly or ismonthly ? ypp_ : na, title="Yearly PP", style=circles, color=#ed8608, linewidth=2)
+plot(isintraday or isdaily or isweekly or ismonthly ? ytc_ : na, title="Yearly TC", style=circles, color=#ed8608, linewidth=2)
+plot(isintraday or isdaily or isweekly or ismonthly ? ybc_ : na, title="Yearly BC", style=circles, color=#ed8608, linewidth=2)
