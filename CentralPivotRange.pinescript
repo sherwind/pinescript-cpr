@@ -44,9 +44,9 @@ dpp_ = new_period(new_day, dpp)
 dtc_ = new_period(new_day, dtc)
 dbc_ = new_period(new_day, dbc)
 
+plot(isintraday ? (dtc_ >= dbc_ ? dtc_ : dbc_) : na, title="Daily TC", style=circles, color=#238859, linewidth=2)
 plot(isintraday ? dpp_ : na, title="Daily PP", style=circles, color=#238859, linewidth=2)
-plot(isintraday ? dtc_ : na, title="Daily TC", style=circles, color=#238859, linewidth=2) 
-plot(isintraday ? dbc_ : na, title="Daily BC", style=circles, color=#238859, linewidth=2)
+plot(isintraday ? (dtc_ >= dbc_ ? dbc_ : dtc_) : na, title="Daily BC", style=circles, color=#238859, linewidth=2)
 
 
 //Weekly Central Pivot Range
@@ -60,9 +60,9 @@ wpp_ = new_period(new_week, wpp)
 wtc_ = new_period(new_week, wtc)
 wbc_ = new_period(new_week, wbc)
 
+plot(isintraday or isdaily ? (wtc_ >= wbc_ ? wtc_ : wbc_) : na, title="Weekly TC", style=circles, color=#5b85bf, linewidth=2)
 plot(isintraday or isdaily ? wpp_ : na, title="Weekly PP", style=circles, color=#5b85bf, linewidth=2)
-plot(isintraday or isdaily ? wtc_ : na, title="Weekly TC", style=circles, color=#5b85bf, linewidth=2) 
-plot(isintraday or isdaily ? wbc_ : na, title="Weekly BC", style=circles, color=#5b85bf, linewidth=2) 
+plot(isintraday or isdaily ? (wtc_ >= wbc_ ? wbc_ : wtc_) : na, title="Weekly BC", style=circles, color=#5b85bf, linewidth=2)
 
 
 //Monthly Central Pivot Range
@@ -76,9 +76,9 @@ mpp_ = new_period(new_month, mpp)
 mtc_ = new_period(new_month, mtc)
 mbc_ = new_period(new_month, mbc)
 
+plot(isintraday or isdaily or isweekly ? (mtc_ >= mbc_ ? mtc_ : mbc_) : na, title="Monthly TC", style=circles, color=#b35b46, linewidth=2)
 plot(isintraday or isdaily or isweekly ? mpp_ : na, title="Monthly PP", style=circles, color=#b35b46, linewidth=2)
-plot(isintraday or isdaily or isweekly ? mtc_ : na, title="Monthly TC", style=circles, color=#b35b46, linewidth=2)
-plot(isintraday or isdaily or isweekly ? mbc_ : na, title="Monthly BC", style=circles, color=#b35b46, linewidth=2)
+plot(isintraday or isdaily or isweekly ? (mtc_ >= mbc_ ? mbc_ : mtc_) : na, title="Monthly BC", style=circles, color=#b35b46, linewidth=2)
 
 
 //Yearly Central Pivot Range
@@ -92,6 +92,6 @@ ypp_ = new_period(new_year, ypp)
 ytc_ = new_period(new_year, ytc)
 ybc_ = new_period(new_year, ybc)
 
+plot(isintraday or isdaily or isweekly or ismonthly ? (ytc_ >= ybc_ ? ytc_ : ybc_) : na, title="Yearly TC", style=circles, color=#ed8608, linewidth=2)
 plot(isintraday or isdaily or isweekly or ismonthly ? ypp_ : na, title="Yearly PP", style=circles, color=#ed8608, linewidth=2)
-plot(isintraday or isdaily or isweekly or ismonthly ? ytc_ : na, title="Yearly TC", style=circles, color=#ed8608, linewidth=2)
-plot(isintraday or isdaily or isweekly or ismonthly ? ybc_ : na, title="Yearly BC", style=circles, color=#ed8608, linewidth=2)
+plot(isintraday or isdaily or isweekly or ismonthly ? (ytc_ >= ybc_ ? ybc_ : ytc_) : na, title="Yearly BC", style=circles, color=#ed8608, linewidth=2)
